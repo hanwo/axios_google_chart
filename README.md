@@ -23,3 +23,9 @@
   * JSON  
   * axios  
   * library : google chart  
+
+# 6. how to use?
+  1. crimeProject folder
+  2. webcontent/crimelist.jsp
+  3. start tomcat
+  4. start live server crimelist.html
