@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+    <div id="crime">
+        <button v-on:click="listUp()">전체통계</button>
+        <button @click="best3()">범죄도시 best3</button>
+    </div>
+    <br>
+    <div id="columnchart_material" style="width: 2700px; height: 700px"></div>
+    <script>
+        new Vue({
+            el: '#crime',
+            data: {
+                //info: "",
+                list: []
+            },
+            mounted() {
+                axios
+                    .get("http://localhost/crimeProject/crimeList.jsp")
+                    .then(resData => {
+                        //this.info = resData.data;
+                        google.charts.load('current', { 'packages': ['bar'] });
+                        var test;
+                        var key;
+                        var value;
+                        const dataArray = Array(27).fill(null).map(() => Array());
+                        for (var i = 0; i < Object.keys.length; i++) {
+                            console.log(Object.keys.length);
+                            test = resData.data[i];
+                            console.log(test);
+                            key = Object.keys(test);
+                            console.log(key);
+                            dataArray[i] = key;
+                            console.log(dataArray);
+                            dataArray[i].shift();
+                        }
+                        for (var i = 0; i < resData.data.length; i++) {
+                            test = resData.data[i];
+                            value = Object.values(test);
+                            dataArray[i + 1] = value;
+                            this.list = (dataArray[i+1]).shift();
+                        }
+                       // this.list = dataArray;
+                        //console.log(this.list.reverse());
+                        console.log(this.list);
+                        console.log(dataArray);
+                        dataArray.splice(1,1);
+                        this.list = dataArray;
+                        console.log(this.list);
+                        //drawChart(dataArray);
+                    })
+                    .catch(function (error) {
+                        console.log("안되안돼", error);
+                    });
+            },
+            methods: {
+                listUp: function () {
+                    var data = google.visualization.arrayToDataTable(this.list);
+                    console.log(data);
+                 
+                    var options = {
+                        title: '서울시 5대 범죄 비율',
+                        curveType: 'function',
+                        legend: { position: 'bottom' }
+                    };
+                    var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+                    chart.draw(data, google.charts.Bar.convertOptions(options));
+                }
+            }
+        })
+        
+
+    </script>
+</body>
+
+</html>
